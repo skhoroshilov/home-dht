@@ -4,6 +4,15 @@ import (
 	"context"
 	"flag"
 	"log"
+	"time"
+
+	"github.com/skhoroshilov/home-dht/influxdb"
+	"github.com/skhoroshilov/home-dht/task"
+
+	// meteo
+	"github.com/skhoroshilov/home-dht/sensor/meteo"
+	"github.com/skhoroshilov/home-dht/sensor/meteo/reader/dht22"
+	meteosender "github.com/skhoroshilov/home-dht/sensor/meteo/sender/influxdb"
 )
 
 func parseSettings() (pin int, influxdbAddress string) {
@@ -19,20 +28,26 @@ func main() {
 	log.Println("Starting")
 
 	pin, influxdbAddress := parseSettings()
-	log.Printf("Using dht22 pin = %v", pin)
 	log.Printf("Using influxdb address = %v", influxdbAddress)
+	log.Printf("Using dht22 pin = %v", pin)
 
-	rd := NewReader(pin)
-	sender, err := NewSender(influxdbAddress)
-
+	ctx := context.TODO()
+	influxdbClient, err := influxdb.NewClient(influxdbAddress)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error creating influxdb client: %v\n", err)
 	}
 
-	defer sender.Close()
+	meteoService := createMeteoService(pin, influxdbClient)
+	task.Start(ctx, 30*time.Second, meteoService.Send)
 
-	job := NewDhtSendingJob(rd, sender)
-	job.Start(context.TODO())
+	task.WaitAll()
 
 	log.Println("Done")
+}
+
+func createMeteoService(pin int, influxdbClient influxdb.Sender) *meteo.Service {
+	reader := dht22.NewReader(pin)
+	sender := meteosender.NewSender(influxdbClient)
+
+	return meteo.NewService(reader, sender)
 }
