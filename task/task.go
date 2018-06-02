@@ -1,3 +1,4 @@
+// Package task provides functionality to run function periodically.
 package task
 
 import (
@@ -6,17 +7,27 @@ import (
 	"time"
 )
 
-var wg sync.WaitGroup
-
-func WaitAll() {
-	wg.Wait()
+// TasksGroup is a group of periodically run tasks,
+type TasksGroup struct {
+	wg sync.WaitGroup
 }
 
-func Start(ctx context.Context, interval time.Duration, task func()) {
-	wg.Add(1)
+// NewTasksGroup creates new instanse of TaskGroup type.
+func NewTasksGroup() *TasksGroup {
+	return &TasksGroup{}
+}
+
+// WaitAll waits all tasks to be finished.
+func (tg *TasksGroup) WaitAll() {
+	tg.wg.Wait()
+}
+
+// Start starts function to run periodically with specified interval.
+func (tg *TasksGroup) Start(ctx context.Context, interval time.Duration, task func()) {
+	tg.wg.Add(1)
 
 	go func() {
-		defer wg.Done()
+		defer tg.wg.Done()
 
 		task()
 

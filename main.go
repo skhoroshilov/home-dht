@@ -15,6 +15,10 @@ import (
 	meteosender "github.com/skhoroshilov/home-dht/sensor/meteo/sender/influxdb"
 )
 
+const (
+	jobInterval = 30 * time.Second
+)
+
 func parseSettings() (pin int, influxdbAddress string) {
 	flag.IntVar(&pin, "pin", 4, "Dht22 pin address")
 	flag.StringVar(&influxdbAddress, "influxdb", "http://192.168.1.92:8086", "Influxdb address")
@@ -32,15 +36,17 @@ func main() {
 	log.Printf("Using dht22 pin = %v", pin)
 
 	ctx := context.TODO()
+	tg := task.NewTasksGroup()
+
 	influxdbClient, err := influxdb.NewClient(influxdbAddress)
 	if err != nil {
 		log.Fatalf("Error creating influxdb client: %v\n", err)
 	}
 
 	meteoService := createMeteoService(pin, influxdbClient)
-	task.Start(ctx, 30*time.Second, meteoService.Send)
+	tg.Start(ctx, jobInterval, func() { meteoService.Send() })
 
-	task.WaitAll()
+	tg.WaitAll()
 
 	log.Println("Done")
 }

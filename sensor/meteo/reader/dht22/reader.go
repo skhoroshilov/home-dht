@@ -19,7 +19,7 @@ func NewReader(pin int) *Reader {
 
 const retryCount = 10
 
-// Read readstemperature and humidity from dht sensor.
+// Read reads temperature and humidity from dht sensor.
 func (reader *Reader) Read() (temperature float32, humidity float32, err error) {
 	temperature, humidity, _, err = dht.ReadDHTxxWithRetry(dht.DHT22, rd.pin, true, retryCount)
 	return
