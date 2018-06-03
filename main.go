@@ -48,7 +48,9 @@ func main() {
 	}
 
 	meteoService := createMeteoService(log, pin, influxdbClient)
-	tg.Start(ctx, jobInterval, func() { meteoService.Send() })
+	tg.Start(ctx, jobInterval, func() {
+		_ = meteoService.Send()
+	})
 
 	tg.WaitAll()
 
