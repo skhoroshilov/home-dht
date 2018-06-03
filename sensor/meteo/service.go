@@ -4,7 +4,8 @@ package meteo
 import (
 	"errors"
 	"fmt"
-	"log"
+
+	"github.com/skhoroshilov/home-dht/log"
 )
 
 // Reader provides interface for reading temperature and humidity from sensor.
@@ -19,36 +20,38 @@ type Sender interface {
 
 // Service reads meteo data from sensor and sends it to metrics storage.
 type Service struct {
+	log    log.Logger
 	reader Reader
 	sender Sender
 }
 
 // NewService creates new instance of Service type.
-func NewService(reader Reader, sender Sender) *Service {
+func NewService(log log.Logger, reader Reader, sender Sender) *Service {
 	return &Service{
+		log:    log,
 		reader: reader,
 		sender: sender,
 	}
 }
 
 // Send reads meteo data from sensor and sends it to metrics server.
-func (task *Service) Send() error {
-	temperature, humidity, err := task.reader.Read()
+func (service *Service) Send() error {
+	temperature, humidity, err := service.reader.Read()
 	if err != nil {
 		message := fmt.Sprintf("Error reading meteo data from reader: %v\n", err)
-		log.Printf(message)
+		service.log.Error(message)
 		return errors.New(message)
 	}
 
-	log.Printf("t = %v h = %v\n", temperature, humidity)
+	service.log.Debugf("t = %v h = %v\n", temperature, humidity)
 
-	err = task.sender.Send(temperature, humidity)
+	err = service.sender.Send(temperature, humidity)
 	if err != nil {
 		message := fmt.Sprintf("Error sending meteo data to influxdb: %v\n", err)
-		log.Printf(message)
+		service.log.Error(message)
 		return errors.New(message)
 	}
 
-	log.Printf("Meteo data sent to influxdb: t = %v h = %v\n", temperature, humidity)
+	service.log.Debugf("Meteo data sent to influxdb: t = %v h = %v\n", temperature, humidity)
 	return nil
 }
