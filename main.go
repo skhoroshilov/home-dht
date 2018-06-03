@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"flag"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/skhoroshilov/home-dht/influxdb"
@@ -39,7 +42,7 @@ func main() {
 	log.Infof("Using influxdb address = %v", influxdbAddress)
 	log.Infof("Using dht22 pin = %v", pin)
 
-	ctx := context.TODO()
+	ctx, cancel := context.WithCancel(context.TODO())
 	tg := task.NewTasksGroup()
 
 	influxdbClient, err := influxdb.NewClient(influxdbAddress)
@@ -52,6 +55,7 @@ func main() {
 		_ = meteoService.Send()
 	})
 
+	setupCancellation(log, cancel)
 	tg.WaitAll()
 
 	log.Info("Done")
@@ -62,4 +66,15 @@ func createMeteoService(log log.Logger, pin int, influxdbClient influxdb.Sender)
 	sender := meteosender.NewSender(influxdbClient)
 
 	return meteo.NewService(log, reader, sender)
+}
+
+func setupCancellation(log log.Logger, cancel func()) {
+	signalChan := make(chan os.Signal)
+	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-signalChan
+		log.Info("Interrupt signal received. Stopping...")
+		cancel()
+	}()
 }
