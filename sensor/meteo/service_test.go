@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/skhoroshilov/home-dht/log/std"
+	"github.com/skhoroshilov/home-dht/log"
 )
 
 // Dht22Mock mocks Reader interface
@@ -42,7 +42,7 @@ func Test_Send_Success(t *testing.T) {
 	// arrange
 
 	var tExpected, hExpected float32 = 35.5, 48.2
-	log := std.NewLogger()
+	log := log.NewMock()
 	reader := &Dht22Mock{t: tExpected, h: hExpected}
 	sender := &InfluxDbSenderMock{}
 	service := NewService(log, reader, sender)
@@ -66,7 +66,7 @@ func Test_Send_ReadFailed(t *testing.T) {
 	// arrange
 
 	expectedError := errors.New("Some erorr reading data from dht reader")
-	log := std.NewLogger()
+	log := log.NewMock()
 	reader := &Dht22Mock{err: expectedError}
 	sender := &InfluxDbSenderMock{}
 	service := NewService(log, reader, sender)
