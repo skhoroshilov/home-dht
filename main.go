@@ -49,6 +49,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error creating influxdb client: %v\n", err)
 	}
+	defer influxdbClient.Close()
 
 	meteoService := createMeteoService(log, pin, influxdbClient)
 	tg.Start(ctx, jobInterval, func() {
