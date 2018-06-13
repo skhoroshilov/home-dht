@@ -20,6 +20,9 @@ type Logger interface {
 	Info(message string)
 	Infof(message string, args ...interface{})
 
+	Warn(message string)
+	Warnf(message string, args ...interface{})
+
 	Error(message string)
 	Errorf(message string, args ...interface{})
 
@@ -38,6 +41,7 @@ type logLevel string
 const (
 	levelDebug = "DEBUG"
 	levelInfo  = "INFO"
+	levelWarn  = "WARN"
 	levelError = "ERROR"
 	levelFatal = "FATAL"
 )
@@ -68,6 +72,14 @@ func (logger *logger) Info(message string) {
 
 func (logger *logger) Infof(message string, args ...interface{}) {
 	logger.writer.Writef(levelInfo, message, args...)
+}
+
+func (logger *logger) Warn(message string) {
+	logger.writer.Write(levelWarn, message)
+}
+
+func (logger *logger) Warnf(message string, args ...interface{}) {
+	logger.writer.Writef(levelWarn, message, args...)
 }
 
 func (logger *logger) Error(message string) {

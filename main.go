@@ -49,7 +49,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error creating influxdb client: %v\n", err)
 	}
-	defer influxdbClient.Close()
+	defer closeOrWarn(log, influxdbClient.Close, "Error closing influxdb client")
 
 	meteoService := createMeteoService(log, pin, influxdbClient)
 	tg.Start(ctx, jobInterval, func() {
@@ -60,6 +60,14 @@ func main() {
 	tg.WaitAll()
 
 	log.Info("Done")
+}
+
+func closeOrWarn(log log.Logger, close func() error, errorMessage string) {
+	err := close()
+
+	if err != nil {
+		log.Warnf(errorMessage+": %v", err)
+	}
 }
 
 func createMeteoService(log log.Logger, pin int, influxdbClient influxdb.Sender) *meteo.Service {
