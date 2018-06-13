@@ -12,7 +12,7 @@ type TasksGroup struct {
 	wg sync.WaitGroup
 }
 
-// NewTasksGroup creates new instanse of TaskGroup type.
+// NewTasksGroup creates new instance of TaskGroup type.
 func NewTasksGroup() *TasksGroup {
 	return &TasksGroup{}
 }

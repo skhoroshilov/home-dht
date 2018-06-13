@@ -12,7 +12,7 @@ import (
 type logger struct {
 }
 
-// NewLogger creates new instanse of dhtlog.Logger that writes messages using log package.
+// NewLogger creates new instance of dhtlog.Logger that writes messages using log package.
 func NewLogger() dhtlog.Logger {
 	stdlogger := &logger{}
 

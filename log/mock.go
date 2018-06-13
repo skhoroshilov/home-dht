@@ -3,7 +3,7 @@ package log
 type loggerMock struct {
 }
 
-// NewMock creates new instanse of dhtlog.Logger that does nothing.
+// NewMock creates new instance of dhtlog.Logger that does nothing.
 // It can be used for tests.
 func NewMock() Logger {
 	mock := &loggerMock{}

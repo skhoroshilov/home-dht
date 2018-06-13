@@ -47,7 +47,7 @@ type logger struct {
 	writer Writer
 }
 
-// NewLogger creates new instanse of logger type using specified Writer.
+// NewLogger creates new instance of logger type using specified Writer.
 func NewLogger(writer Writer) Logger {
 	return &logger{
 		writer: writer,
