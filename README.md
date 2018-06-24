@@ -6,14 +6,14 @@
 
 A simple app that gathers temperature and humidity from DHT22 sensor and sends it to influxdb for using at grafana dashboards.
 
-[![Dashboard example](doc/images/example.png)]
+![Dashboard example](doc/images/example.png)
 
 ## Requirements
 
 * DHT22 temperature and humidity sensor
 * linux pc (e.g. Raspberry Pi) for gathering data from DHT22 sensor
-* influxdb [![influxdb](https://github.com/influxdata/influxdb)]
-* grafana [![grafana](https://github.com/grafana/grafana)]
+* ![influxdb](https://github.com/influxdata/influxdb)
+* ![grafana](https://github.com/grafana/grafana)
 
 ## Building home-dht
 
@@ -27,7 +27,7 @@ You need golang installed to build this app. This app can be built only on linux
 
 2. Install and run grafana [![grafana installation](https://github.com/grafana/grafana#installation)]
 
-3. Create dashboard in grafana. You can import existing dashboard ([![Dashboard example](third_party/grafana/dashboard.json)]) or create your own. The app uses influxdb "autogen"."data" database, fields "temperature" and "humidity".
+3. Create dashboard in grafana. You can import ![existing dashboard](third_party/grafana/dashboard.json) or create your own. The app uses influxdb `autogen.data` database, fields `temperature` and `humidity`.
 
 4. Start home-dht app
 
