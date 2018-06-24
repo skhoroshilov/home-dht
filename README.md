@@ -19,13 +19,13 @@ A simple app that gathers temperature and humidity from DHT22 sensor and sends i
 
 `make`
 
-You need golang installed to build this app. This app can be built only on linux machine because the library used for reading DHT22 data can be build properly only for linux. If you build the app on windows it will use fake DHT22 data.
+You need golang installed to build this app. This app can be built only on linux machine because the library used for reading DHT22 data can be built properly only for linux. If you build the app on windows it will use fake DHT22 data.
 
 ## Getting Started
 
-1. Install and run influxdb [![influxdb installation](https://github.com/influxdata/influxdb#installation)]
+1. ![Install and run influxdb](https://github.com/influxdata/influxdb#installation)
 
-2. Install and run grafana [![grafana installation](https://github.com/grafana/grafana#installation)]
+2. ![Install and run grafana](https://github.com/grafana/grafana#installation)
 
 3. Create dashboard in grafana. You can import ![existing dashboard](third_party/grafana/dashboard.json) or create your own. The app uses influxdb `autogen.data` database, fields `temperature` and `humidity`.
 
